@@ -3,13 +3,13 @@ Plugin Name: SeerBit Payment Gateway plugin For Woocommerce
 Description: Add SeerBit Pay to your e-commerce store and start collecting payments today. No Coding Required.
 Tags: SeerBit payment, SeerBit, button, payment, online payments, pay now, buy now, e-commerce, gateway, Nigeria, Africa, Ghana
 Author: SeerBit
-Version: 1.3.8
+Version: 1.3.9
 Author URI: https://seerbit.com
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Requires at least:
-Tested up to: 6.1.1
-Stable tag: 1.3.8
+Tested up to: 6.4.3
+Stable tag: 1.3.9
 
 
 Start accepting payments on your WooCommerce store using SeerBit for WooCommerce plugin
@@ -95,4 +95,6 @@ To configure the plugin, go to __WooCommerce > Settings__ from the left hand me
 = 1.3.7 - 2022-12-23 =
 * Update - bug fix
 = 1.3.8 - 2022-12-23 =
+* Update - bug fix
+= 1.3.9 - 2024-04-01 =
 * Update - bug fix
