@@ -4,21 +4,26 @@ Plugin Name: SeerBit payment gateway plugin For WooCommerce
 Description: Start accepting payments on your WooCommerce store using SeerBit for WooCommerce plugin.
 Tags: SeerBit payment, SeerBit, payment, payment gateway, online payments, pay now, buy now, e-commerce, gateway, Nigeria, Africa, Ghana
 Author: SeerBit
-Version: 1.3.9
+Version: 1.4.0
 Author URI: https://seerbit.com
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Requires at least:
-Tested up to: 6.1.1
-Stable tag: 1.3.9
+Tested up to: 6.7.1
+Stable tag: 1.4.0
 */
+
+
+use Automattic\WooCommerce\Admin\Notes\Note;
+use Automattic\WooCommerce\Admin\Notes\Notes;
+use Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry;
 
 if (!defined('ABSPATH')) {
 	exit;
 }
 define( 'WC_SEERBIT_FILE', __FILE__ );
 define( 'WC_SEERBIT_URL', untrailingslashit( plugins_url( '/', __FILE__ ) ) );
-define( 'WC_SEERBIT_VERSION', '1.3.9' );
+define( 'WC_SEERBIT_VERSION', '1.4.0' );
 
 
 /**
@@ -68,10 +73,13 @@ function wc_add_seerbit_gateway($methods)
     if ( ! class_exists( 'WC_Payment_Gateway' ) )
     {
         add_action( 'admin_notices', 'seerbit_payment_wc_missing_notice' );
+		
         return;
     }
 	if (class_exists('WC_Payment_Gateway_CC')) 
 	{
+		$methods[] = 'WC_Gateway_Seerbit';
+	} else {
 		$methods[] = 'WC_Gateway_Seerbit';
 	}
 
@@ -85,3 +93,28 @@ function seerbit_payment_wc_missing_notice()
 {
 	echo '<div class="error"><p><strong>' . sprintf(__('SeerBit requires WooCommerce to be installed and active. Click %s to install WooCommerce.', 'seerbit-payment'), '<a href="' . admin_url('plugin-install.php?tab=plugin-information&plugin=woocommerce&TB_iframe=true&width=772&height=539') . '" class="thickbox open-plugin-details-modal">here</a>') . '</strong></p></div>';
 }
+
+add_action(
+	'before_woocommerce_init',
+	function () {
+		if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+		}
+	}
+);
+
+function seerbit_woocommerce_block_support() {
+	if ( class_exists( 'Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType' ) ) {
+		require_once __DIR__ . '/includes/class-wc-gateway-seerbit-blocks-support.php';
+		add_action(
+			'woocommerce_blocks_payment_method_type_registration',
+			static function( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry ) {
+				$payment_method_registry->register( new WC_Gateway_SeerBit_Blocks_Support() );
+			}
+		);
+	}
+}
+
+
+add_action( 'woocommerce_blocks_loaded', 'seerbit_woocommerce_block_support' );
+
